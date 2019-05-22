@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>二级域名页</title>
+</head>
+<body>
+<div>
+    <a href="http://local.domain.cn/Domain/domain">返回顶级域名页</a>
+    <table border="1" align="center" id="record-table">
+        <tr>
+            <td colspan="11" id="d_id">
+                <{if isset($domain)}><{$domain.d_name}><{/if}>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>二级域名</td>
+            <td>主机IP</td>
+            <td>状态</td>
+            <td>备注</td>
+            <td>创建时间</td>
+            <td>最后操作时间</td>
+            <td colspan="4">操作</td>
+        </tr>
+        <{if isset($record)}>
+        <{foreach $record as $value}>
+        <tr data-record-id="<{$value.id}>">
+            <td><input type="checkbox" class="r_id" name="check_rid"></td>
+            <td class="r_name"><{$value.r_name}></td>
+            <td><select class="r_account">
+                    <option class="r_ip"><{$value.r_ip}></option>
+                </select></td>
+            <td><{if $value.status eq 1}>已启用<{else}>已禁用<{/if}></td>
+            <td class="r_remark"><{$value.remark}></td>
+            <td><{$value.r_time}></td>
+            <td><{$value.option_time}></td>
+            <td><input type="button" value="解析" class="record-inside"></td>
+            <td><input type="button" value="管理" class="record-manage" record-id="<{$value.id}>"</td>
+            <td><input type="button" value="<{if $value.status eq 1}>禁用<{else}>启用<{/if}>" class="record-status1"
+                       data-record-status="<{$value.status}>"></td>
+        </tr>
+        <{/foreach}>
+        <{else}>
+        <tr>
+            <td colspan="9">没有数据</td>
+        </tr>
+        <{/if}>
+        <tr>
+            <td colspan="10">
+                <input type="button" value="尾页" style="float: right" id="record-last-page">
+                <input type="button" value="下一页" style="float: right" id="record-next-page">
+                <b style="float: right">&nbsp;<input type="text" id="record-page" style="max-width: 15px"
+                                                     placeholder="<{if $count eq 0}>1<{else}><{$page_val}><{/if}>">
+
+
+                    |<b id="count">
+                        <{if $count eq 0}>1<{else}><{$count}><{/if}>
+                    </b></b>&nbsp;
+                <input type="button" value="上一页" style="float: right" id="record-before-page">
+                <input type="button" value="添加二级域名" style="float: right" id="add-record">
+                <input type='button' value='批量删除' style='float: right' id='del-all-record'>
+                <input type="button" value="批量更改" style="float: right" id="change-all-record">
+            </td>
+        </tr>
+    </table>
+    <!--  添加域名弹窗  -->
+    <div style="width: 100%;padding:100%;top:0px;height: 100%;position: fixed;display: none" id="add-record-windows">
+        <div style="width:400px;height: 600px;top: 100px;z-index: 100;left:40% ;position: fixed;border: groove;background-color: grey">
+            <div style="font-size: x-large;float:right" id="add-record-close">
+                <button>X</button>
+            </div>
+            <div style="width: 300px;padding-left: 100px">
+                <h1 style="left: 15%;position: relative">二级域名添加</h1>
+                <p/>
+                <div id="add-in-here">
+                    <table style="position: relative;right: 100px">
+                        <tr>
+                            <td>二级域名</td>
+                            <td>主机IP</td>
+                            <td>备注</td>
+                        </tr>
+                        <tr class="add-line">
+                            <td><input type="text" class="add-record_name"></td>
+                            <td><select class="add-r_ip">
+                                    <option></option>
+                                    <{foreach $all_server as $value}><option><{$value.server_ip}></option><{/foreach}>
+                                </select></td>
+                            <td><input type="text" class="add-record_remark" style="width: 103px"></td>
+                        </tr>
+                        <tr class="add-line">
+                            <td><input type="text" class="add-record_name"></td>
+                            <td><select class="add-r_ip">
+                                    <option></option>
+                                    <{foreach $all_server as $value}><option><{$value.server_ip}></option><{/foreach}>
+                                </select></td>
+                            <td><input type="text" class="add-record_remark" style="width: 103px"></td>
+                        </tr>
+                        <tr class="add-line">
+                            <td><input type="text" class="add-record_name"></td>
+                            <td><select class="add-r_ip">
+                                    <option></option>
+                                    <{foreach $all_server as $value}><option><{$value.server_ip}></option><{/foreach}></select></td>
+                            <td><input type="text" class="add-record_remark" style="width: 103px"></td>
+                        </tr>
+                        <tr class="add-line">
+                            <td><input type="text" class="add-record_name"></td>
+                            <td><select class="add-r_ip">
+                                    <option></option>
+                                    <{foreach $all_server as $value}><option><{$value.server_ip}></option><{/foreach}></select></td>
+                            <td><input type="text" class="add-record_remark" style="width: 103px"></td>
+                        </tr>
+                        <tr class="add-line">
+                            <td><input type="text" class="add-record_name"></td>
+                            <td><select class="add-r_ip">
+                                    <option></option>
+                                    <{foreach $all_server as $value}><option><{$value.server_ip}></option><{/foreach}></select></td>
+                            <td><input type="text" class="add-record_remark" style="width: 103px"></td>
+                        </tr>
+                        <tr class="add-line">
+                            <td><input type="text" class="add-record_name"></td>
+                            <td><select class="add-r_ip">
+                                    <option></option>
+                                    <{foreach $all_server as $value}><option><{$value.server_ip}></option><{/foreach}></select></td>
+                            <td><input type="text" class="add-record_remark" style="width: 103px"></td>
+                        </tr>
+                        <tr class="add-line">
+                            <td><input type="text" class="add-record_name"></td>
+                            <td><select class="add-r_ip">
+                                    <option></option>
+                                    <{foreach $all_server as $value}><option><{$value.server_ip}></option><{/foreach}></select></td>
+                            <td><input type="text" class="add-record_remark" style="width: 103px"></td>
+                        </tr>
+                        <tr class="add-line">
+                            <td><input type="text" class="add-record_name"></td>
+                            <td><select class="add-r_ip">
+                                    <option></option>
+                                    <{foreach $all_server as $value}><option><{$value.server_ip}></option><{/foreach}></select></td>
+                            <td><input type="text" class="add-record_remark" style="width: 103px"></td>
+                        </tr>
+                        <tr class="add-line">
+                            <td><input type="text" class="add-record_name"></td>
+                            <td><select class="add-r_ip">
+                                    <option></option>
+                                    <{foreach $all_server as $value}><option><{$value.server_ip}></option><{/foreach}></select></td>
+                            <td><input type="text" class="add-record_remark" style="width: 103px"></td>
+                        </tr>
+                        <tr class="add-line">
+                            <td><input type="text" class="add-record_name"></td>
+                            <td><select class="add-r_ip">
+                                    <option></option>
+                                    <{foreach $all_server as $value}><option><{$value.server_ip}></option><{/foreach}></select></td>
+                            <td><input type="text" class="add-record_remark" style="width: 103px"></td>
+                        </tr>
+                    </table>
+                    <input type="button" value="confirm" id="add-record-confirm">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--  添加域名弹窗end  -->
+    <!--  管理域名弹窗  -->
+    <div style="width: 100%;padding:100%;top:0px;height: 100%;position: fixed;display: none" id="update-record-windows">
+        <div style="width:400px;height: 600px;top: 100px;z-index: 100;left:40% ;position: fixed;border: groove;background-color: grey">
+            <div style="font-size: x-large;float:right" id="update-record-close">
+                <button>X</button>
+            </div>
+            <div style="width: 300px;padding-left: 100px">
+                <h1 style="left: 15%;position: relative">二级域名添加</h1>
+                <p/>
+                <div>
+                    <i>二级域名:<input type="text" id="update-record_name" data-id="" readonly>
+                        <p/><i
+                                id="check-result"></i></i>
+                    <p/>
+                    <i style="right:15px;position: relative">主机IP地址:<select id="update-r_ip" disabled>
+                            <option id="chose-ip"></option>
+                            <?php
+                            $server = $this->data['all_server'];
+                            foreach ($server as $value) {
+                                $ip = '<option>' . $value['server_ip'] . '</option>';
+                                echo $ip;
+                            }
+                            ?></select></i>
+                    <p/>
+                    <i style="right: 13px;position: relative">备注:<input type="text" id="update-record_remark" readonly></i>
+                    <p/>
+                    <input type="button" value="更改" id="change-record">
+                    <input type="button" value="confirm" id="update-record-confirm">
+                    <input type="button" value="delete" id="delete-record-confirm">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--  管理域名弹窗end  -->
+</div>
+</body>
+<script src="../public/static/jquery/jquery-3.3.1.js"></script>
+<script>
+    //    添加二级弹窗
+    $("body").delegate("#add-record", "click", function () {
+        $("#add-record-windows").fadeIn("slow");
+    });
+    // $("body").delegate("#record-last-page","click",function ()
+    $("body").delegate("#add-record-close", "click", function () {
+        $("#add-record-windows").fadeOut("slow");
+        $("#add-record_name").val("");
+        $("#add-r_ip option:first").prop("selected", 'selected');
+        $("#add-record_remark").val("");
+        $(".add-line").each(function () {
+            $(this).find(".add-record_name").val("");
+            $(this).find(".add-r_ip").eq(0).prop("selected", true);
+            $(this).find(".add-record_remark").val("");
+        })
+    });
+    //    管理弹窗
+    $("body").delegate(".record-manage", "click", function () {
+        $("#update-record-windows").fadeIn("slow");
+        $("#update-record_name").val($(this).closest("tr").find(".r_name").text());
+        $("#chose-ip").text($(this).closest("tr").find(".r_ip").text());
+        $("#update-record_remark").val($(this).closest("tr").find(".r_remark").text());
+        $("#update-record_name").attr("data-id", $(this).closest("tr").attr("data-record-id"));
+    });
+    $("body").delegate("#update-record-close", "click", function () {
+        $("#update-record-windows").fadeOut("slow");
+        $("#update-record_name").attr("readonly", "readonly");
+        $("#update-r_ip").attr("disabled", "disabled");
+        $("#update-record_remark").attr("readonly", "readonly");
+    });
+    //批量添加二级域名
+    $("body").delegate("#add-record-confirm", "click", function () {
+        $(".add-line").each(function () {
+            if ($(this).find(".add-record_name").val() != "") {
+                var record = {
+                    "r_name": $(this).find(".add-record_name").val(),
+                    "r_ip": $(this).find(".add-r_ip option:selected").val(),
+                    "remark": $(this).find(".add-record_remark").val(),
+                    "d_id":<{$domain.id}>
+                }
+                $.ajax({
+                    url: "http://local.domain.cn/Record/add_record",
+                    data: {
+                        "record": record
+                    },
+                    dataType: "json",
+                    type: "POST",
+                    success: function (data) {
+                        if (data.code == 200) {
+                            $("#add-record-close").trigger("click");
+                            $("#record-last-page").trigger("click");
+                        } else if (data.code == 202) {
+                        }
+                    }
+                })
+            }
+        });
+        alert("添加完成");
+    });
+    //    删除二级域名
+    $("body").delegate("#delete-record-confirm", "click", function () {
+        var id = $("#update-record_name").attr("data-id");
+        $.ajax({
+            url: "http://local.domain.cn/Record/del_record",
+            data: {
+                "id": id
+            },
+            dataType: "json",
+            type: "POST",
+            success: function (data) {
+                if (data.code == 200) {
+                    alert(data.data);
+                    $("#record-page").val($("#record-page").attr("placeholder"));
+                    enter();
+                    $("#update-record-close").trigger("click");
+                } else if (data.code == 202) {
+                    alert(data.data);
+                }
+            }
+        })
+    });
+    //    更改二级域名状态
+    $("body").delegate(".record-status1", "click", function () {
+        var id = $(this).closest("tr").attr("data-record-id");
+        var status = $(this).attr("data-record-status");
+        $.ajax({
+            url: "http://local.domain.cn/Record/set_status",
+            type: "POST",
+            dataType: "json",
+            data: {
+                "id": id,
+                "status": status
+            },
+            success: function (data) {
+                if (data.code == 200) {
+                    alert(data.data);
+                    $("#record-page").val($("#record-page").attr("placeholder"));
+                    enter();
+                    $("#update-record-close").trigger("click");
+                } else if (data.code == 202) {
+                    alert(data.data);
+                }
+            }
+        })
+    })
+    //    更改二级域名
+    $("body").delegate("#update-record-confirm", "click", function () {
+
+        var r_name = $("#update-record_name").val();
+        var r_ip = $("#update-r_ip option:selected").val();
+        var remark = $("#update-record_remark").val();
+        var id = $("#update-record_name").attr("data-id");
+        $.ajax({
+            url: "http://local.domain.cn/Record/update_record",
+            data: {
+                "r_name": r_name,
+                "r_ip": r_ip,
+                "remark": remark,
+                "id": id
+            },
+            dataType: "json",
+            type: "POST",
+            success: function (data) {
+                if (data.code == 200) {
+                    alert(data.data);
+                    $("#record-page").val($("#record-page").attr("placeholder"));
+                    enter();
+                    $("#update-record-close").trigger("click");
+                } else if (data.code == 202) {
+                    alert(data.data);
+                }
+            }
+        })
+    });
+    //    更改域名
+    $("body").delegate("#change-record", "click", function () {
+        $("#update-record_name").removeAttr("readonly");
+        $("#update-r_ip").removeAttr("disabled");
+        $("#update-record_remark").removeAttr("readonly");
+    });
+    //    解析
+    $("body").delegate(".record-inside", "click", function () {
+        var top = $("#d_id").text();
+        var second = $(this).closest("tr").find(".r_name").text();
+        window.open("http://" + second + "." + top);
+    });
+    //    分页
+    //    更新表格
+    function flash_table(record, pageSize, page_val, all_count, count) {
+        var page = new Array();
+        var list_count = 0;
+        if (page_val < count) {
+            list_count = 3;
+        } else {
+            list_count = all_count - pageSize * (page_val - 1);
+        }
+        if (count == 0) {
+            count = 1;
+        }
+        if (page_val == 0) {
+            page_val = 1;
+        }
+        var table = "<tr>" +
+            "<td colspan='10' id='d_id'><{$domain.d_name}></td>" +
+            "</tr>" +
+            "<tr>" +
+            "<td></td>" +
+            "<td>二级域名</td>" +
+            "<td>主机IP</td>" +
+            "<td>状态</td>" +
+            "<td>备注</td>" +
+            "<td>创建时间</td>" +
+            "<td>最后操作时间</td>" +
+            "<td colspan='3'>操作</td>" +
+            "</tr>";
+        for (var i = 0; i < list_count; i++) {
+            var status;
+            var status1;
+            if (record[i]['status'] == 1) {
+                status = "停用";
+                status1 = "已启用";
+            } else {
+                status = "启用";
+                status1 = "已停用";
+            }
+            page[i] = "<tr data-record-id='" + record[i]['id'] + "'>" +
+                "<td><input type='checkbox' class='r_id' name='check_rid'></td>" +
+                "<td class = 'r_name'>" + record[i]['r_name'] + "</td>" +
+                "<td><select class='r_account'>"
+                + "<option class='r_ip'>" + record[i]['r_ip'] + "</option>" +
+                "</select></td>" +
+                "<td> " + status1 + "</td> " +
+                "<td> " + record[i]['remark'] + "</td>" +
+                "<td> " + record[i]['r_time'] + "</td>" +
+                "<td> " + record[i]['option_time'] + "</td> " +
+                "<td><input type='button' value='解析' class='record-inside'></td>" +
+                "<td><input type='button' value='管理' class='record-manage' record-id=" + record[i]['id'] + "></td>" +
+                "<td><input type='button'  value= " + status + " class='record-status1' data-record-status='" + record[i]['status'] + "'></td>" +
+                "</tr>"
+
+        }
+        var under = "<tr>" +
+            "<td colspan='10'>" +
+            "<input type='button' value='尾页' style='float: right' id='record-last-page'>" +
+            "<input type='button' value='下一页' style='float: right' id='record-next-page'>" +
+            "<b style='float: right'>&nbsp;<input type='text' id='record-page' style='max-width: 15px' placeholder=" + page_val + ">|" + "<b  id='count'>" + count + "</b>" +
+            "</b></b>&nbsp;" +
+            "<input type='button' value='上一页' style='float: right' id='record-before-page'>" +
+            "<input type='button' value='添加二级域名' style='float: right' id='add-record'>" +
+            "<input type='button' value='批量删除' style='float: right' id='del-all-record'>" +
+            "<input type='button' value='批量更改' style='float: right' id='change-all-record'>" +
+            "</td>" +
+            "</tr>";
+        $("#record-table").html(table + page + under);
+    }
+
+    //    尾页
+    $("body").delegate("#record-last-page", "click", function () {
+        var account_name = <{$all_account}>;
+        var page_val = $("#count").text();
+        var id = <{$domain.id}>;
+        $.ajax({
+            url: "http://local.domain.cn/Record/set_page",
+            data: {
+                "page_val": page_val,
+                "d_id": id,
+                "account_name": account_name
+            },
+            dataType: "json",
+            type: "GET",
+            async: true,
+            success: function (data) {
+                if (data.code == 200) {
+                    $("#record-page").attr("placeholder", data.page_val);
+                    flash_table(data.record, data.pageSize, data.page_val, data.all_count, data.count);
+                }
+            }
+        });
+    });
+    //    下一页
+    $("body").delegate("#record-next-page", "click", function () {
+        var page_val = parseInt($("#record-page").attr("placeholder")) + 1;
+        var count = $("#count").text();
+        var account_name = <{$all_account}>;
+        sessionStorage.setItem('page_val', page_val);
+        if (page_val > count) {
+            alert("已经是最后一页了");
+            return false;
+        }
+        var id = <{$domain.id}>;
+        $.ajax({
+            url: "http://local.domain.cn/Record/set_page",
+            data: {
+                "page_val": page_val,
+                "d_id": id,
+                "account_name": account_name
+            },
+            dataType: "json",
+            type: "GET",
+            async: true,
+            success: function (data) {
+                if (data.code == 200) {
+                    $("#record-page").attr("placeholder", data.page_val);
+                    flash_table(data.record, data.pageSize, data.page_val, data.all_count, data.count);
+                }
+            }
+        });
+    });
+    //    上一页
+    $("body").delegate("#record-before-page", "click", function () {
+        var page_val = parseInt($("#record-page").attr("placeholder")) - 1;
+        if (page_val <= 0) {
+            alert("已经是最前一页了");
+            return false;
+        }
+        var id = <{$domain.id}>;
+        var account_name = <{$all_account}>;
+        $.ajax({
+            url: "http://local.domain.cn/Record/set_page",
+            data: {
+                "page_val": page_val,
+                "d_id": id,
+                "account_name": account_name
+            },
+            dataType: "json",
+            type: "GET",
+            async: true,
+            success: function (data) {
+                if (data.code == 200) {
+                    $("#record-page").attr("placeholder", data.page_val);
+                    flash_table(data.record, data.pageSize, data.page_val, data.all_count, data.count);
+                }
+            }
+        });
+    });
+    //    页面输入框跳转
+    $("body").delegate("#record-page", "keyup", function () {
+        if (event.keyCode == 13) {
+            enter();
+        }
+    });
+
+    function enter() {
+        var page_val = $("#record-page").val();
+        var max = $("#count").text();
+        if (page_val > max) {
+            alert("超过最大页数");
+            return false;
+        } else if (page_val < 1) {
+            alert("正常点~~~页数没对");
+            return false;
+        }
+        var id =<{$domain.id}>;
+        var account_name = <{$all_account}>;
+        $.ajax({
+            url: "http://local.domain.cn/Record/set_page",
+            data: {
+                "page_val": page_val,
+                "d_id": id,
+                "account_name": account_name
+            },
+            dataType: "json",
+            type: "GET",
+            async: true,
+            success: function (data) {
+                if (data.code == 200) {
+                    $("#record-page").attr("placeholder", data.page_val);
+                    flash_table(data.record, data.pageSize, data.page_val, data.all_count, data.count);
+                }
+            }
+        });
+    }
+
+
+    //    勾选框勾选状态
+    $("body").delegate(".r_id", "click", function () {
+        if ($(this).prop("checked") === true) {
+            $(this).closest("tr").find(".r_account").append("<{foreach $all_server as $value}><option><{$value.server_ip}></option><{/foreach}>");
+        } else {
+            var r_ip = $(this).closest("tr").find(".r_ip").text();
+            $(this).closest("tr").find(".r_account").html("<option class='r_ip'>" + r_ip + "</option>");
+        }
+    });
+    //    批量更改
+    $("body").delegate("#change-all-record", "click", function () {
+        var bool = 0;
+        var right = 0;
+        $("input[name='check_rid']").each(function () {
+            if ($(this).prop("checked") === true) {
+                bool = bool + 1;
+                var id = $(this).closest("tr").attr("data-record-id");
+                var r_ip = $(this).closest("tr").find(".r_account option:checked").val();
+                $.ajax({
+                    url: "http://local.domain.cn/Record/update_record2",
+                    data: {
+                        "r_ip": r_ip,
+                        "id": id
+                    },
+                    dataType: "json",
+                    type: "POST",
+                    success: function (data) {
+                        if (data.code == 200) {
+                            $("#record-page").val($("#record-page").attr("placeholder"));
+                            enter();
+                            $("#update-record-close").trigger("click");
+                        } else if (data.code == 202) {
+                        }
+                    }
+                })
+            }
+        });
+        alert("共" + bool + "个更改");
+    });
+    //    批量删除
+    $("body").delegate("#del-all-record", "click", function () {
+        var bool = 0;
+        var right = 0;
+        $("input[name='check_rid']").each(function () {
+            if ($(this).prop("checked") === true) {
+                bool = bool + 1;
+                var id = $(this).closest("tr").attr("data-record-id");
+                $.ajax({
+                    url: "http://local.domain.cn/Record/del_record",
+                    data: {
+                        "id": id
+                    },
+                    dataType: "json",
+                    type: "POST",
+                    success: function (data) {
+                        if (data.code == 200) {
+                            $("#record-page").val($("#record-page").attr("placeholder"));
+                            right = right + 1;
+                            enter();
+                            $("#update-record-close").trigger("click");
+                        } else if (data.code == 202) {
+
+                        }
+                    }
+                });
+            }
+        });
+        alert("共" + bool + "个删除");
+    });
+</script>
+</html>
